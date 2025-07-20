@@ -1,22 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { PassportSerializer } from '@nestjs/passport';
-
-import { User } from '../user/entities/user.entity';
+import { User } from 'src/schemas/user.schema';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
-export class SessionSerializer extends PassportSerializer {
-  serializeUser(
-    user: User,
-    done: (err: Error | null, id?: User) => void,
-  ): void {
-    delete user.password;
+export class sessionSerializer extends PassportSerializer {
+  constructor(
+    @Inject(UsersService) private readonly userService: UsersService,
+  ) {
+    super();
+  }
+
+  serializeUser(user: User, done: Function) {
     done(null, user);
   }
 
-  deserializeUser(
-    payload: unknown,
-    done: (err: Error | null, payload?: unknown) => void,
-  ): void {
-    done(null, payload);
+  async deserializeUser(user: User, done: Function) {
+    done(null, user);
   }
 }

@@ -1,37 +1,30 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-
-import { User } from '../user/entities/user.entity';
-import { SignUp } from './dto/sign-up.dto';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
-import { UserService } from '../user/services/user.service';
+import { User } from 'src/schemas/user.schema';
+import { UsersService } from 'src/users/users.service';
+import * as bcrypt from 'bcryptjs';
+import { RegisterUserDto } from 'src/users/dtos/register.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userService: UserService,
+    private readonly userService: UsersService,
     private readonly jwtService: JwtService,
   ) {}
 
-  async register(signUp: SignUp): Promise<User> {
-    const user = await this.userService.create(signUp);
-    delete user.password;
-
+  async register(signUp: RegisterUserDto) {
+    const user = await this.userService.registerUser(signUp);
     return user;
   }
 
   async login(email: string, password: string): Promise<User> {
-    let user: User;
-
-    try {
-      user = await this.userService.findOne({ where: { email } });
-    } catch (err) {
+    const user = await this.userService.findUserByEmail(email);
+    if (!user)
       throw new UnauthorizedException(
         `There isn't any user with email: ${email}`,
       );
-    }
-
-    if (!(await user.checkPassword(password))) {
+    if (!(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException(
         `Wrong password for user with email: ${email}`,
       );
@@ -41,16 +34,12 @@ export class AuthService {
   }
 
   async verifyPayload(payload: JwtPayload): Promise<User> {
-    let user: User;
-
-    try {
-      user = await this.userService.findOne({ where: { email: payload.sub } });
-    } catch (error) {
+    const user = await this.userService.findUserByEmail(payload.sub);
+    if (!user) {
       throw new UnauthorizedException(
         `There isn't any user with email: ${payload.sub}`,
       );
     }
-
     return user;
   }
 

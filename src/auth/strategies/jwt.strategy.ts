@@ -3,10 +3,10 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, ExtractJwt, JwtFromRequestFunction } from 'passport-jwt';
 
 import { AuthService } from '../auth.service';
-import { User } from '../../user/entities/user.entity';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
+import { User } from 'src/schemas/user.schema';
 
-const extractJwtFromCookie: JwtFromRequestFunction = request => {
+const extractJwtFromCookie: JwtFromRequestFunction = (request) => {
   return request.signedCookies['token']!; // eslint-disable-line @typescript-eslint/no-non-null-assertion
 };
 
@@ -18,7 +18,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         extractJwtFromCookie,
         ExtractJwt.fromAuthHeaderAsBearerToken(),
       ]),
-      secretOrKey: process.env.APP_SECRET,
+      secretOrKey: process.env.JWT_SECRET!,
       ignoreExpiration: false,
       passReqToCallback: false,
     });

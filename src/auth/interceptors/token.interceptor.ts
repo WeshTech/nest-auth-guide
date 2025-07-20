@@ -8,8 +8,8 @@ import type { Response } from 'express';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import type { User } from '../../user/entities/user.entity';
 import { AuthService } from '../auth.service';
+import { User } from 'src/schemas/user.schema';
 
 @Injectable()
 export class TokenInterceptor implements NestInterceptor {
@@ -20,7 +20,7 @@ export class TokenInterceptor implements NestInterceptor {
     next: CallHandler<User>,
   ): Observable<User> {
     return next.handle().pipe(
-      map(user => {
+      map((user) => {
         const response = context.switchToHttp().getResponse<Response>();
         const token = this.authService.signToken(user);
 

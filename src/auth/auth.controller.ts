@@ -1,6 +1,5 @@
 import {
   Body,
-  ClassSerializerInterceptor,
   Controller,
   Get,
   HttpCode,
@@ -10,24 +9,23 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 
-import { AuthUser } from '../user/decorators/user.decorator';
-import { User } from '../user/entities/user.entity';
 import { AuthService } from './auth.service';
-import { SignUp } from './dto/sign-up.dto';
 import { JWTAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { SessionAuthGuard } from './guards/session-auth.guard';
 import { TokenInterceptor } from './interceptors/token.interceptor';
+import { User } from 'src/schemas/user.schema';
+import { AuthUser } from 'src/users/decorators/user.decorator';
+import { RegisterUserDto } from 'src/users/dtos/register.dto';
 
 @Controller('auth')
-@UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
   @UseInterceptors(TokenInterceptor)
-  register(@Body() signUp: SignUp): Promise<User> {
+  register(@Body() signUp: RegisterUserDto) {
     return this.authService.register(signUp);
   }
 
