@@ -5,12 +5,14 @@ import { User } from 'src/schemas/user.schema';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcryptjs';
 import { RegisterUserDto } from 'src/users/dtos/register.dto';
+import { SessionsService } from 'src/sessions/sessions.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly sessionService: SessionsService,
   ) {}
 
   async register(signUp: RegisterUserDto) {
@@ -27,6 +29,14 @@ export class AuthService {
     if (!(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException(
         `Wrong password for user with email: ${email}`,
+      );
+    }
+
+    const existingSession = await this.sessionService.getActiveSessions(email);
+    console.log(existingSession);
+    if (existingSession > 0) {
+      throw new UnauthorizedException(
+        'Sorry, you are logged in another device',
       );
     }
 

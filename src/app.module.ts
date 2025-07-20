@@ -8,6 +8,7 @@ import { envConfigSchema } from './config/envConfig.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import { PassportModule } from '@nestjs/passport';
+import { SessionsModule } from './sessions/sessions.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { PassportModule } from '@nestjs/passport';
 
     AuthModule,
     UsersModule,
+    SessionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

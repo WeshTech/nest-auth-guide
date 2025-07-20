@@ -36,7 +36,7 @@ async function bootstrap() {
         maxAge: Number(configService.get<string>('SESSION_EXPIRATION')),
         httpOnly: true,
         secure: configService.get<string>('NODE_ENV') === 'production',
-        sameSite: 'lax',
+        sameSite: 'strict',
       },
     }),
   );

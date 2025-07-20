@@ -12,7 +12,16 @@ export class sessionSerializer extends PassportSerializer {
   }
 
   serializeUser(user: User, done: Function) {
-    done(null, user);
+    const {
+      password,
+      isVerified,
+      createdAt,
+      updatedAt,
+      isActive,
+      __v,
+      ...sanitizedUser
+    } = user.toObject?.() || user;
+    done(null, sanitizedUser);
   }
 
   async deserializeUser(user: User, done: Function) {

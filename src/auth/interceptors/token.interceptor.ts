@@ -10,6 +10,7 @@ import { map } from 'rxjs/operators';
 
 import { AuthService } from '../auth.service';
 import { User } from 'src/schemas/user.schema';
+import { SessionsService } from 'src/sessions/sessions.service';
 
 @Injectable()
 export class TokenInterceptor implements NestInterceptor {

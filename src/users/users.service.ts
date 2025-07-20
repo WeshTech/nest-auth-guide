@@ -29,7 +29,8 @@ export class UsersService {
       business: registerUserDto.business,
     });
 
-    const { password, ...result } = createdUser.toJSON();
+    const { password, _id, role, isActive, isVerified, __v, ...result } =
+      createdUser.toJSON();
     return result;
   }
 
